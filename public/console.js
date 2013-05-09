@@ -1,14 +1,16 @@
 $().ready( function() {
-  if (endpoint == null) {
+  if (ws_host == null) {
     // endpoint should be set in index.haml
     // value provided by torquebox injection
     // but if for whatever reason that doesn't
     // work, we'll try this
-    endpoint = "ws://localhost:8675" 
+    ws_host = 'localhost'
+    ws_port = '8675'
+    ws_secure = 'false'
   } else { 
-    alert( "Using: " + endpoint )
+    alert( "Using: " + ws_host + ':' + port + '(' + ws_secure + ')' )
   }
-  client = Stomp.client( endpoint )
+  client = new Stomp.Client( ws_host, ws_port, ws_secure )
 
   var display_message = function( message ) {
       elem = $("#console .content")
