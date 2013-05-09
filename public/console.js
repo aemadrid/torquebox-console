@@ -1,16 +1,15 @@
 $().ready( function() {
-  if (ws_host == null) {
-    // endpoint should be set in index.haml
-    // value provided by torquebox injection
-    // but if for whatever reason that doesn't
-    // work, we'll try this
-    ws_host = 'localhost'
-    ws_port = '8675'
-    ws_secure = 'false'
-  } else { 
-    alert( "Using: " + ws_host + ':' + ws_port + '(' + ws_secure + ')' )
+  function getURLParameter(name) {
+    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
   }
-  client = new Stomp.Client( ws_host, ws_port, ws_secure )
+
+  var ws_host = getURLParameter('host') || tb_ws_host || 'localhost';
+  var ws_port = getURLParameter('port') || tb_ws_port || '8675';
+  var ws_secure = getURLParameter('secure') || tb_ws_secure || false;
+
+  alert("Using: " + ws_host + ':' + ws_port + '(' + ws_secure + ')');
+
+  client = new Stomp.Client( ws_host, ws_port, ws_secure );
 
   var display_message = function( message ) {
       elem = $("#console .content")
