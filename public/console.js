@@ -8,7 +8,7 @@ $().ready( function() {
     ws_port = '8675'
     ws_secure = 'false'
   } else { 
-    alert( "Using: " + ws_host + ':' + port + '(' + ws_secure + ')' )
+    alert( "Using: " + ws_host + ':' + ws_port + '(' + ws_secure + ')' )
   }
   client = new Stomp.Client( ws_host, ws_port, ws_secure )
 
