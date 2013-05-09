@@ -21,14 +21,14 @@ module TorqueBox
       attr_accessor :input_queue, :output_queue, :console_id, :application, :runtime
 
       def initialize(console_id, input_queue, output_queue, application, runtime)
-        @console_id = console_id
-        @input_queue = input_queue
+        @console_id   = console_id
+        @input_queue  = input_queue
         @output_queue = output_queue
-        @application = application
-        @runtime = runtime
+        @application  = application
+        @runtime      = runtime
       end
 
-      def run( entry_point )
+      def run(entry_point)
         Thread.new do
           Pry.config.pager  = false
           #Pry.config.color  = false
@@ -38,21 +38,21 @@ module TorqueBox
       end
 
       # Pry input channel
-      def readline( prompt )
+      def readline(prompt)
         # First send the repl prompt to the client
-        output_queue.publish prompt, {:properties => {'prompt' => 'true'}}
+        output_queue.publish prompt, { :properties => { 'prompt' => 'true' } }
         # Then wait for input
         input_queue.receive
       end
 
       # Pry output channel
-      def puts( output = "" )
+      def puts(output = "")
         output_queue.publish output.to_s
       end
 
-      def evaluate( code )
+      def evaluate(code)
         binding = TorqueBox::Console::Builtin.create_block.binding
-        eval( code, binding )
+        eval(code, binding)
       end
 
       # Pry (undocumented?) requires this

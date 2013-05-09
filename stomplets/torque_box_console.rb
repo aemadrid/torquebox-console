@@ -37,6 +37,7 @@ class TorqueBoxConsole < TorqueBox::Stomp::JmsStomplet
       # Intercept the switch runtime commands
       if input =~ /^\s*(switch_application|switch_runtime)\s*\(.+\)$/
         app, runtime = server.evaluate( input )
+        puts "Stomplet : on_message : switching app [#{app}] and runtime [#{runtime}] ..."
         switch_runtime( app, runtime, console_id )
         output_queue = TorqueBox::Messaging::Queue.new( output_name( console_id ) )
         send_to( output_queue, "Switched to #{runtime} runtime of #{app} application" )
@@ -83,14 +84,16 @@ class TorqueBoxConsole < TorqueBox::Stomp::JmsStomplet
 
   def switch_runtime(app, runtime, console_id)
     runtime ||= 'web'
+    puts "Stomplet : switch_runtime : switching app [#{app}] and runtime [#{runtime}] on (#{console_id}) ..."
     @server_runtimes[console_id] ||= {}
     @server_runtimes[console_id][app] ||= {}
     existing_server = @server_runtimes[console_id][app][runtime]
     if existing_server
+      puts "Stomplet : switch_runtime : we have this server [#{existing_server}] ..."
       # shuffle the desired runtime to the current one
       @servers[console_id] << @servers[console_id].delete( existing_server )
       input_queue = TorqueBox::Messaging::Queue.new( existing_server.input_queue.name )
-      send_to( input_queue, "" )
+      send_to( input_queue, '')
     else
       deps = File.join(File.dirname(__FILE__), '..', 'dependencies') 
       pool = lookup_runtime( app, runtime )
@@ -109,6 +112,7 @@ class TorqueBoxConsole < TorqueBox::Stomp::JmsStomplet
         server.run( TorqueBox::Console::Builtin )
         server
       """ )
+      puts "Stomplet : switch_runtime : we don't have this server [#{server}] ..."
       @server_runtimes[console_id][app][runtime] = server
       @servers[console_id] ||= []
       @servers[console_id] << server

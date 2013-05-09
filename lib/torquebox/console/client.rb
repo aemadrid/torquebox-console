@@ -18,8 +18,8 @@ require 'readline'
 module TorqueBox
   module Console
     class Client
-      DEFAULT_HEADERS = { "accept-version" => "1.1" }
-      DEFAULT_HOST = { :host => "localhost", :port => 8675 }
+      DEFAULT_HEADERS = { 'accept-version' => "1.1" }
+      DEFAULT_HOST = { :host => 'localhost', :port => 8675 }
       DEFAULT_PARAMS  = { :max_reconnect_attempts => -1, :reliable => false }
 
       attr_accessor :client
@@ -28,7 +28,7 @@ module TorqueBox
         build_globals(host)
         @client = Stomp::Client.new(@params)
       rescue Stomp::Error::MaxReconnectAttempts
-        puts "Cannot connect to TorqueBox. Are you sure the server is running?"
+        puts 'Cannot connect to TorqueBox. Are you sure the server is running?'
       end
 
       def self.connect (host = DEFAULT_HOST)
@@ -37,11 +37,11 @@ module TorqueBox
 
       def run
         if client
-          trap("INT") {
+          trap('INT') {
             client.close if client.open?
-            puts "Disconnecting console, press enter to exit"
+            puts 'Disconnecting console, press enter to exit'
           }
-          prompt = "TorqueBox> "
+          prompt = 'TorqueBox> '
           received_prompt = false
           client.subscribe("/stomplet/console") do |msg|
             if msg.headers['prompt']
@@ -58,7 +58,7 @@ module TorqueBox
           end
           while client.open? && (input = Readline.readline(prompt, true))
             received_prompt = false
-            client.publish("/stomplet/console", input) if client.open?
+            client.publish('/stomplet/console', input) if client.open?
             while !received_prompt && client.open?
               sleep 0.05 # again with the async
             end
@@ -66,7 +66,7 @@ module TorqueBox
           if client.open?
             client.unsubscribe('/stomplet/console') 
           end
-          $stderr.puts "Connection closed."
+          $stderr.puts 'Connection closed.'
           # Hide any errors printed after we've unsubscribed
           $stderr.close
         end
