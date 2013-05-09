@@ -1,3 +1,4 @@
 torquebox-console-*.gem
 vendor
 .bundle
+.rbenv*
